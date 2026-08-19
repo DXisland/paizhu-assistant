@@ -62,7 +62,7 @@ body {
     width: 40%;
     height: 11.5%;
     left: 30%;
-    top: 2%;
+    top: 12%;
     border-radius: 50%;
     border-width: 3.5px;
 }
@@ -72,7 +72,7 @@ body {
     width: 92%;
     height: 34%;
     left: 4%;
-    top: 13%;
+    top: 23%;
     border-radius: 48% 48% 26% 26% / 62% 62% 18% 18%;
     border-width: 3px;
 }
@@ -81,7 +81,7 @@ body {
 .sg-arm {
     width: 12%;
     height: 30%;
-    top: 16%;
+    top: 26%;
     border-radius: 45% 45% 38% 38%;
     border-width: 3px;
 }
@@ -103,13 +103,13 @@ body {
 
 /* 模式：上身（头+肩胸） */
 .silhouette-guide[data-mode="upper"] .sg-head {
-    top: 6%;
+    top: 16%;
     width: 42%;
     height: 13%;
     left: 29%;
 }
 .silhouette-guide[data-mode="upper"] .sg-torso {
-    top: 19%;
+    top: 29%;
     height: 28%;
 }
 .silhouette-guide[data-mode="upper"] .sg-arm,
@@ -119,17 +119,17 @@ body {
 
 /* 模式：半身（头+躯干+手臂） */
 .silhouette-guide[data-mode="half"] .sg-head {
-    top: 3%;
+    top: 13%;
     width: 41%;
     height: 12.5%;
     left: 29.5%;
 }
 .silhouette-guide[data-mode="half"] .sg-torso {
-    top: 14%;
+    top: 24%;
     height: 38%;
 }
 .silhouette-guide[data-mode="half"] .sg-arm {
-    top: 16%;
+    top: 26%;
     height: 36%;
 }
 .silhouette-guide[data-mode="half"] .sg-leg {
@@ -138,17 +138,17 @@ body {
 
 /* 模式：全身（头+躯干+手臂+腿） */
 .silhouette-guide[data-mode="full"] .sg-head {
-    top: 1.5%;
+    top: 10%;
     width: 40%;
     height: 11.5%;
     left: 30%;
 }
 .silhouette-guide[data-mode="full"] .sg-torso {
-    top: 12%;
+    top: 20%;
     height: 34%;
 }
 .silhouette-guide[data-mode="full"] .sg-arm {
-    top: 14%;
+    top: 22%;
     height: 31%;
 }
 .silhouette-guide[data-mode="full"] .sg-leg {
@@ -326,26 +326,28 @@ body {
     display: flex;
     justify-content: space-around;
     align-items: center;
+    flex-wrap: wrap;
+    gap: 8px 2px;
 }
 
 .action-btn {
     display: flex;
     flex-direction: column;
     align-items: center;
-    gap: 4px;
-    padding: 8px 10px;
+    gap: 3px;
+    padding: 6px 4px;
     border: none;
-    border-radius: 12px;
+    border-radius: 10px;
     background: #333;
     color: #fff;
-    font-size: 11px;
+    font-size: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
-    min-width: 60px;
+    min-width: 56px;
 }
 
 .action-btn .icon {
-    font-size: 20px;
+    font-size: 18px;
 }
 
 .action-btn:active {
@@ -360,7 +362,7 @@ body {
 
 .record-btn {
     background: #f44336;
-    min-width: 64px;
+    min-width: 60px;
 }
 
 .record-btn.recording {
