@@ -39,62 +39,123 @@ body {
     transition: transform 0.3s ease;
 }
 
-/* ===== 人像辅助线（SVG 真实人体轮廓，头顶黄金分割位 38.2%） ===== */
+/* ===== 人像辅助线（CSS人体轮廓，头顶黄金分割位 38.2%） ===== */
 .silhouette-guide {
     position: absolute;
     left: 50%;
     top: 0;
     transform: translateX(-50%);
-    width: 48%;
+    width: 60%;
     height: 100%;
     pointer-events: none;
     z-index: 5;
     transition: all 0.3s ease;
 }
 
-.sg-svg {
+.sg {
     position: absolute;
-    left: 50%;
-    transform: translateX(-50%);
+    border: 2.5px dashed rgba(255, 255, 255, 0.9);
     display: none;
     pointer-events: none;
-    stroke: rgba(255, 255, 255, 0.95);
-    stroke-width: 2.5;
-    stroke-linecap: round;
-    stroke-linejoin: round;
-    stroke-dasharray: 7 5;
-    fill: none;
-    filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.8)) drop-shadow(0 0 8px rgba(255, 255, 255, 0.3));
     transition: all 0.3s ease;
 }
 
-/* 全身：头顶 38.2%（黄金分割），脚约 83% */
-.silhouette-guide[data-mode="full"] .sg-svg-full {
-    display: block;
-    height: 47%;
-    top: 38.2%;
+.sg-head {
+    width: 42%;
+    height: 12%;
+    left: 29%;
+    border-radius: 45% 45% 48% 48% / 46% 46% 54% 54%;
 }
 
-/* 半身：头顶 36%，腰部约 66% */
-.silhouette-guide[data-mode="half"] .sg-svg-half {
-    display: block;
-    height: 34%;
-    top: 36%;
+.sg-neck {
+    width: 12%;
+    height: 3%;
+    left: 44%;
 }
 
-/* 上身：头顶 34%，胸部约 56% */
-.silhouette-guide[data-mode="upper"] .sg-svg-upper {
-    display: block;
-    height: 26%;
-    top: 34%;
+.sg-shoulders {
+    width: 100%;
+    height: 6%;
+    left: 0;
+    border-radius: 50% 50% 15% 15%;
 }
+
+.sg-chest {
+    width: 78%;
+    height: 12%;
+    left: 11%;
+    border-radius: 15% 15% 5% 5%;
+}
+
+.sg-torso {
+    width: 72%;
+    height: 18%;
+    left: 14%;
+    border-radius: 12% 12% 5% 5%;
+}
+
+.sg-arm {
+    width: 12%;
+    height: 18%;
+    border-radius: 40%;
+}
+.sg-arm-left { left: 0; }
+.sg-arm-right { right: 0; }
+
+.sg-leg {
+    width: 18%;
+    height: 20%;
+    border-radius: 8px 8px 12px 12px;
+}
+.sg-leg-left { left: 24%; }
+.sg-leg-right { right: 24%; }
+
+/* 上身模式：头顶34%，胸约58% */
+[data-mode="upper"] .sg-head,
+[data-mode="upper"] .sg-neck,
+[data-mode="upper"] .sg-shoulders,
+[data-mode="upper"] .sg-chest { display: block; }
+[data-mode="upper"] .sg-head { top: 33%; }
+[data-mode="upper"] .sg-neck { top: 44.5%; }
+[data-mode="upper"] .sg-shoulders { top: 47%; }
+[data-mode="upper"] .sg-chest { top: 52%; }
+
+/* 半身模式：头顶32%，腰约65% */
+[data-mode="half"] .sg-head,
+[data-mode="half"] .sg-neck,
+[data-mode="half"] .sg-shoulders,
+[data-mode="half"] .sg-torso,
+[data-mode="half"] .sg-arm { display: block; }
+[data-mode="half"] .sg-head { top: 32%; }
+[data-mode="half"] .sg-neck { top: 43.5%; }
+[data-mode="half"] .sg-shoulders { top: 46%; }
+[data-mode="half"] .sg-torso { top: 51%; }
+[data-mode="half"] .sg-arm { top: 46.5%; height: 18%; }
+
+/* 全身模式：头顶38.2%（黄金分割），脚约90% */
+[data-mode="full"] .sg-head,
+[data-mode="full"] .sg-neck,
+[data-mode="full"] .sg-shoulders,
+[data-mode="full"] .sg-torso,
+[data-mode="full"] .sg-arm,
+[data-mode="full"] .sg-leg { display: block; }
+[data-mode="full"] .sg-head { top: 38.2%; }
+[data-mode="full"] .sg-neck { top: 49.7%; }
+[data-mode="full"] .sg-shoulders { top: 52%; }
+[data-mode="full"] .sg-torso { top: 56.5%; height: 14%; }
+[data-mode="full"] .sg-arm { top: 52.5%; height: 16%; }
+[data-mode="full"] .sg-leg { top: 70%; }
 
 /* 无模式兜底：显示上身 */
-.silhouette-guide .sg-svg-upper {
-    display: block;
-    height: 26%;
-    top: 34%;
-}
+.silhouette-guide .sg-head,
+.silhouette-guide .sg-neck,
+.silhouette-guide .sg-shoulders,
+.silhouette-guide .sg-chest { display: block; }
+.silhouette-guide .sg-head { top: 33%; }
+.silhouette-guide .sg-neck { top: 44.5%; }
+.silhouette-guide .sg-shoulders { top: 47%; }
+.silhouette-guide .sg-chest { top: 52%; }
 
 
 /* ===== 通用提示条 ===== */
@@ -292,7 +353,7 @@ body {
 #audio-waveform {
     width: 100%;
     height: 46px;
-    background: rgba(0, 0, 0, 0.35);
+    background: transparent;
     border-radius: 8px;
 }
 
@@ -317,14 +378,14 @@ body {
 
 .mode-btn {
     padding: 8px 22px;
-    border: 1px solid rgba(255, 255, 255, 0.45);
+    border: 1px solid rgba(255, 255, 255, 0.35);
     border-radius: 25px;
-    background: rgba(0, 0, 0, 0.25);
+    background: transparent;
     color: #fff;
     font-size: 14px;
     cursor: pointer;
     transition: all 0.3s ease;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 .mode-btn.active {
@@ -350,15 +411,15 @@ body {
     align-items: center;
     gap: 3px;
     padding: 6px 4px;
-    border: none;
+    border: 1px solid rgba(255, 255, 255, 0.2);
     border-radius: 10px;
-    background: rgba(0, 0, 0, 0.25);
+    background: transparent;
     color: #fff;
     font-size: 10px;
     cursor: pointer;
     transition: all 0.3s ease;
     min-width: 56px;
-    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.9);
+    text-shadow: 0 1px 3px rgba(0, 0, 0, 0.9);
 }
 
 .action-btn .icon {
@@ -376,7 +437,8 @@ body {
 }
 
 .record-btn {
-    background: #f44336;
+    background: transparent;
+    border-color: rgba(244, 67, 54, 0.6);
     min-width: 60px;
 }
 
