@@ -11,34 +11,17 @@
     <div class="container">
         <div class="video-container">
             <video id="video" autoplay playsinline muted></video>
-            <!-- 人像辅助线（SVG真实人体轮廓） -->
+            <!-- 人像辅助线（CSS人体轮廓） -->
             <div id="silhouette-guide" class="silhouette-guide" data-mode="upper">
-                <!-- 全身 -->
-                <svg class="sg-svg sg-svg-full" viewBox="0 0 100 150" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="50" cy="11" rx="7" ry="8.5"/>
-                    <path d="M46.5 19.5 L46.5 24 M53.5 19.5 L53.5 24"/>
-                    <path d="M36.5 24 C34 35 35 52 38 68 C39 76 40 82 42 86 L58 86 C60 82 61 76 62 68 C65 52 66 35 63.5 24 C60 30 55.5 32 50 32 C44.5 32 40 30 36.5 24 Z"/>
-                    <path d="M38 26 C35.5 39 35.5 53 37 67 C37.5 73 38 78 39 82"/>
-                    <path d="M62 26 C64.5 39 64.5 53 63 67 C62.5 73 62 78 61 82"/>
-                    <path d="M45 86 C44.5 102 44 118 43.5 133 C43.5 139 44.5 143 46 145"/>
-                    <path d="M55 86 C55.5 102 56 118 56.5 133 C56.5 139 55.5 143 54 145"/>
-                </svg>
-                <!-- 半身 -->
-                <svg class="sg-svg sg-svg-half" viewBox="0 0 100 95" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="50" cy="11" rx="7" ry="8.5"/>
-                    <path d="M46.5 19.5 L46.5 24 M53.5 19.5 L53.5 24"/>
-                    <path d="M36.5 24 C34 35 35 52 38 68 C39 76 40 82 42 86 L58 86 C60 82 61 76 62 68 C65 52 66 35 63.5 24 C60 30 55.5 32 50 32 C44.5 32 40 30 36.5 24 Z"/>
-                    <path d="M38 26 C35.5 39 35.5 53 37 67 C37.5 73 38 78 39 82"/>
-                    <path d="M62 26 C64.5 39 64.5 53 63 67 C62.5 73 62 78 61 82"/>
-                </svg>
-                <!-- 上身 -->
-                <svg class="sg-svg sg-svg-upper" viewBox="0 0 100 62" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <ellipse cx="50" cy="11" rx="7" ry="8.5"/>
-                    <path d="M46.5 19.5 L46.5 24 M53.5 19.5 L53.5 24"/>
-                    <path d="M36.5 24 C34 33 35 46 37.5 55 L62.5 55 C65 46 66 33 63.5 24 C60 30 55.5 32 50 32 C44.5 32 40 30 36.5 24 Z"/>
-                    <path d="M38 26 C36 36 36 46 37 54"/>
-                    <path d="M62 26 C64 36 64 46 63 54"/>
-                </svg>
+                <div class="sg sg-head"></div>
+                <div class="sg sg-neck"></div>
+                <div class="sg sg-shoulders"></div>
+                <div class="sg sg-chest"></div>
+                <div class="sg sg-torso"></div>
+                <div class="sg sg-arm sg-arm-left"></div>
+                <div class="sg sg-arm sg-arm-right"></div>
+                <div class="sg sg-leg sg-leg-left"></div>
+                <div class="sg sg-leg sg-leg-right"></div>
             </div>
             <!-- 亮度提示 -->
             <div id="brightness-alert" class="alert hidden"></div>
