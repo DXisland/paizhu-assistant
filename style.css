@@ -6,7 +6,7 @@
 
 body {
     font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-    background: #1a1a1a;
+    background: #000;
     color: #fff;
     overflow: hidden;
     height: 100vh;
@@ -15,18 +15,21 @@ body {
 }
 
 .container {
-    display: flex;
-    flex-direction: column;
     height: 100vh;
     max-width: 100vw;
+    position: relative;
 }
 
-/* ===== 视频区域 ===== */
+/* ===== 视频区域（全屏） ===== */
 .video-container {
-    flex: 1;
-    position: relative;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
     background: #000;
     overflow: hidden;
+    z-index: 1;
 }
 
 #video {
@@ -36,13 +39,13 @@ body {
     transition: transform 0.3s ease;
 }
 
-/* ===== 人像辅助线（完整人形：头/躯干/手臂/腿） ===== */
+/* ===== 人像辅助线（成年人体比例：头身比1:7，肩宽=头宽2.5倍） ===== */
 .silhouette-guide {
     position: absolute;
     left: 50%;
     top: 0;
     transform: translateX(-50%);
-    width: 52%;
+    width: 48%;
     height: 100%;
     pointer-events: none;
     z-index: 5;
@@ -51,108 +54,207 @@ body {
 
 .sg {
     position: absolute;
-    border: 3px dashed rgba(255, 255, 255, 0.95);
-    filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
     box-sizing: border-box;
     transition: all 0.3s ease;
+    border: 3px dashed rgba(255, 255, 255, 0.95);
+    filter: drop-shadow(0 0 3px rgba(0, 0, 0, 0.9)) drop-shadow(0 0 6px rgba(255, 255, 255, 0.35));
 }
 
-/* 头部 */
-.sg-head {
-    width: 40%;
-    height: 11.5%;
-    left: 30%;
-    top: 12%;
-    border-radius: 50%;
+/* ===== 全身模式（默认）：头+颈+肩躯干+双臂+双腿 ===== */
+
+/* 头部：椭圆，头高略大于头宽（真实头型） */
+.silhouette-guide[data-mode="full"] .sg-head {
+    width: 30%;
+    height: 11%;
+    left: 35%;
+    top: 8%;
+    border-radius: 48% 48% 50% 50% / 46% 46% 54% 54%;
     border-width: 3.5px;
 }
 
-/* 躯干（肩宽头宽的2.3倍，肩部圆润） */
-.sg-torso {
-    width: 92%;
-    height: 34%;
-    left: 4%;
-    top: 23%;
-    border-radius: 48% 48% 26% 26% / 62% 62% 18% 18%;
+/* 颈部 */
+.silhouette-guide[data-mode="full"] .sg-neck {
+    width: 9%;
+    height: 3.5%;
+    left: 45.5%;
+    top: 18.5%;
+    border-radius: 40%;
     border-width: 3px;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
 }
 
-/* 手臂 */
-.sg-arm {
-    width: 12%;
+/* 躯干：宽肩、收腰、圆臀，肩宽=头宽2.5倍 */
+.silhouette-guide[data-mode="full"] .sg-torso {
+    width: 88%;
     height: 30%;
-    top: 26%;
-    border-radius: 45% 45% 38% 38%;
+    left: 6%;
+    top: 21%;
+    border-radius: 46% 46% 32% 32% / 58% 58% 28% 28%;
     border-width: 3px;
 }
 
-.sg-arm-left { left: 1%; }
-.sg-arm-right { right: 1%; }
-
-/* 腿 */
-.sg-leg {
-    width: 19%;
-    height: 26%;
-    bottom: 4%;
-    border-radius: 35% 35% 30% 30%;
+/* 手臂：从肩垂至髋，上粗下细，手在髋部 */
+.silhouette-guide[data-mode="full"] .sg-arm {
+    width: 12%;
+    height: 31%;
+    top: 22%;
+    border-radius: 40% 40% 55% 55%;
     border-width: 3px;
 }
 
-.sg-leg-left { left: 22%; }
-.sg-leg-right { right: 22%; }
+.silhouette-guide[data-mode="full"] .sg-arm-left { left: 3%; }
+.silhouette-guide[data-mode="full"] .sg-arm-right { right: 3%; }
 
-/* 模式：上身（头+肩胸） */
-.silhouette-guide[data-mode="upper"] .sg-head {
-    top: 16%;
-    width: 42%;
-    height: 13%;
-    left: 29%;
-}
-.silhouette-guide[data-mode="upper"] .sg-torso {
-    top: 29%;
-    height: 28%;
-}
-.silhouette-guide[data-mode="upper"] .sg-arm,
-.silhouette-guide[data-mode="upper"] .sg-leg {
-    display: none;
+/* 腿：从髋至脚，上粗下细，腿间留隙 */
+.silhouette-guide[data-mode="full"] .sg-leg {
+    width: 17%;
+    height: 30%;
+    top: 56%;
+    border-radius: 28% 28% 30% 30%;
+    border-width: 3px;
 }
 
-/* 模式：半身（头+躯干+手臂） */
+.silhouette-guide[data-mode="full"] .sg-leg-left { left: 25%; }
+.silhouette-guide[data-mode="full"] .sg-leg-right { right: 25%; }
+
+/* ===== 半身模式：头+颈+躯干+手臂（腰部截断） ===== */
 .silhouette-guide[data-mode="half"] .sg-head {
-    top: 13%;
-    width: 41%;
-    height: 12.5%;
-    left: 29.5%;
+    width: 30%;
+    height: 11%;
+    left: 35%;
+    top: 12%;
+    border-radius: 48% 48% 50% 50% / 46% 46% 54% 54%;
+    border-width: 3.5px;
 }
+
+.silhouette-guide[data-mode="half"] .sg-neck {
+    width: 9%;
+    height: 3.5%;
+    left: 45.5%;
+    top: 22.5%;
+    border-radius: 40%;
+    border-width: 3px;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+}
+
 .silhouette-guide[data-mode="half"] .sg-torso {
-    top: 24%;
-    height: 38%;
+    width: 88%;
+    height: 32%;
+    left: 6%;
+    top: 25%;
+    border-radius: 46% 46% 26% 26% / 58% 58% 20% 20%;
+    border-width: 3px;
 }
+
 .silhouette-guide[data-mode="half"] .sg-arm {
+    width: 12%;
+    height: 33%;
     top: 26%;
-    height: 36%;
+    border-radius: 40% 40% 55% 55%;
+    border-width: 3px;
 }
+
+.silhouette-guide[data-mode="half"] .sg-arm-left { left: 3%; }
+.silhouette-guide[data-mode="half"] .sg-arm-right { right: 3%; }
+
 .silhouette-guide[data-mode="half"] .sg-leg {
     display: none;
 }
 
-/* 模式：全身（头+躯干+手臂+腿） */
-.silhouette-guide[data-mode="full"] .sg-head {
-    top: 10%;
-    width: 40%;
-    height: 11.5%;
-    left: 30%;
+/* ===== 上身模式：头+颈+肩躯干（胸部截断） ===== */
+.silhouette-guide[data-mode="upper"] .sg-head {
+    width: 30%;
+    height: 11%;
+    left: 35%;
+    top: 16%;
+    border-radius: 48% 48% 50% 50% / 46% 46% 54% 54%;
+    border-width: 3.5px;
 }
-.silhouette-guide[data-mode="full"] .sg-torso {
-    top: 20%;
-    height: 34%;
+
+.silhouette-guide[data-mode="upper"] .sg-neck {
+    width: 9%;
+    height: 3.5%;
+    left: 45.5%;
+    top: 26.5%;
+    border-radius: 40%;
+    border-width: 3px;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
 }
-.silhouette-guide[data-mode="full"] .sg-arm {
-    top: 22%;
-    height: 31%;
+
+.silhouette-guide[data-mode="upper"] .sg-torso {
+    width: 88%;
+    height: 19%;
+    left: 6%;
+    top: 29%;
+    border-radius: 46% 46% 30% 30% / 58% 58% 30% 30%;
+    border-width: 3px;
 }
-.silhouette-guide[data-mode="full"] .sg-leg {
-    display: block;
+
+.silhouette-guide[data-mode="upper"] .sg-arm {
+    width: 12%;
+    height: 20%;
+    top: 30%;
+    border-radius: 40% 40% 55% 55%;
+    border-width: 3px;
+}
+
+.silhouette-guide[data-mode="upper"] .sg-arm-left { left: 3%; }
+.silhouette-guide[data-mode="upper"] .sg-arm-right { right: 3%; }
+
+.silhouette-guide[data-mode="upper"] .sg-leg {
+    display: none;
+}
+
+/* 无模式时的兜底（默认上半身样式） */
+.silhouette-guide .sg-head {
+    width: 30%;
+    height: 11%;
+    left: 35%;
+    top: 16%;
+    border-radius: 48% 48% 50% 50% / 46% 46% 54% 54%;
+    border-width: 3.5px;
+}
+
+.silhouette-guide .sg-neck {
+    width: 9%;
+    height: 3.5%;
+    left: 45.5%;
+    top: 26.5%;
+    border-radius: 40%;
+    border-width: 3px;
+    border-left: none;
+    border-right: none;
+    border-bottom: none;
+}
+
+.silhouette-guide .sg-torso {
+    width: 88%;
+    height: 19%;
+    left: 6%;
+    top: 29%;
+    border-radius: 46% 46% 30% 30% / 58% 58% 30% 30%;
+    border-width: 3px;
+}
+
+.silhouette-guide .sg-arm {
+    width: 12%;
+    height: 20%;
+    top: 30%;
+    border-radius: 40% 40% 55% 55%;
+    border-width: 3px;
+}
+
+.silhouette-guide .sg-arm-left { left: 3%; }
+.silhouette-guide .sg-arm-right { right: 3%; }
+
+.silhouette-guide .sg-leg {
+    display: none;
 }
 
 /* ===== 通用提示条 ===== */
@@ -328,32 +430,48 @@ body {
     z-index: 2;
 }
 
-/* ===== 音频区域 ===== */
+/* ===== 音频区域（浮动透明叠加在视频上） ===== */
 .audio-section {
-    background: #2a2a2a;
-    padding: 10px 16px;
-    border-top: 1px solid #3a3a3a;
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 132px;
+    z-index: 20;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 8px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .audio-status {
     font-size: 12px;
-    color: #aaa;
+    color: #ccc;
     margin-bottom: 6px;
     text-align: center;
+    text-shadow: 0 1px 2px rgba(0, 0, 0, 0.8);
 }
 
 #audio-waveform {
     width: 100%;
-    height: 52px;
-    background: #1a1a1a;
+    height: 46px;
+    background: rgba(0, 0, 0, 0.35);
     border-radius: 8px;
 }
 
-/* ===== 控制区域 ===== */
+/* ===== 控制区域（浮动透明叠加在视频上） ===== */
 .controls {
-    background: #1a1a1a;
-    padding: 12px 8px;
-    padding-bottom: calc(12px + env(safe-area-inset-bottom));
+    position: fixed;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 30;
+    background: rgba(0, 0, 0, 0.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    padding: 10px 8px;
+    padding-bottom: calc(10px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(255, 255, 255, 0.12);
 }
 
 .mode-selector {
@@ -365,9 +483,9 @@ body {
 
 .mode-btn {
     padding: 8px 22px;
-    border: 1px solid #555;
+    border: 1px solid rgba(255, 255, 255, 0.4);
     border-radius: 25px;
-    background: transparent;
+    background: rgba(0, 0, 0, 0.4);
     color: #fff;
     font-size: 14px;
     cursor: pointer;
@@ -399,7 +517,7 @@ body {
     padding: 6px 4px;
     border: none;
     border-radius: 10px;
-    background: #333;
+    background: rgba(0, 0, 0, 0.45);
     color: #fff;
     font-size: 10px;
     cursor: pointer;
