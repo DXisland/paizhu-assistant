@@ -435,13 +435,13 @@ body {
     position: fixed;
     left: 0;
     right: 0;
-    bottom: 132px;
+    bottom: 128px;
     z-index: 20;
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    padding: 8px 16px;
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 6px 16px;
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .audio-status {
@@ -466,12 +466,12 @@ body {
     right: 0;
     bottom: 0;
     z-index: 30;
-    background: rgba(0, 0, 0, 0.35);
-    backdrop-filter: blur(6px);
-    -webkit-backdrop-filter: blur(6px);
-    padding: 10px 8px;
-    padding-bottom: calc(10px + env(safe-area-inset-bottom));
-    border-top: 1px solid rgba(255, 255, 255, 0.12);
+    background: rgba(0, 0, 0, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    padding: 8px 8px;
+    padding-bottom: calc(8px + env(safe-area-inset-bottom));
+    border-top: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .mode-selector {
