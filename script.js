@@ -182,6 +182,10 @@ function hideAlert(el) {
 }
 
 /* ===== 手机高度提醒（DeviceOrientation） ===== */
+let betaBase = null;
+let betaSamples = [];
+let orientationReceived = false;
+
 function requestOrientationPermission() {
     if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
         const req = async () => {
@@ -200,19 +204,37 @@ function requestOrientationPermission() {
 
 function startOrientationCheck() {
     window.addEventListener('deviceorientation', handleOrientation);
+    setTimeout(() => {
+        if (!orientationReceived) {
+            showAlert(heightAlert, '未检测到手机角度传感器，请点击屏幕授权后重试', 'height-high');
+            setTimeout(() => hideAlert(heightAlert), 4000);
+        }
+    }, 4000);
 }
 
 function handleOrientation(e) {
     const beta = e.beta;
     if (beta === null || beta === undefined) return;
+    orientationReceived = true;
+
+    // 收集前 20 个样本作为基准（用户正常持机姿势）
+    if (betaBase === null) {
+        betaSamples.push(beta);
+        if (betaSamples.length >= 20) {
+            betaBase = betaSamples.reduce((a, b) => a + b) / betaSamples.length;
+        }
+        return;
+    }
+
+    const delta = beta - betaBase;
     const HOLD_MS = 1500;
-    if (beta > 35) {
+    if (delta > 35) {
         heightAlert.dataset.state = 'high';
         heightAlert.dataset.since = heightAlert.dataset.since || Date.now();
         if (Date.now() - parseInt(heightAlert.dataset.since) > HOLD_MS) {
             showAlert(heightAlert, '手机拿得太高，俯拍会显头大、身形变形，请放低一些', 'height-high');
         }
-    } else if (beta < -35) {
+    } else if (delta < -35) {
         heightAlert.dataset.state = 'low';
         heightAlert.dataset.since = heightAlert.dataset.since || Date.now();
         if (Date.now() - parseInt(heightAlert.dataset.since) > HOLD_MS) {
