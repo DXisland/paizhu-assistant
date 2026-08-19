@@ -3,6 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
     <title>拍摄辅助工具</title>
     <link rel="stylesheet" href="style.css">
 </head>
@@ -10,13 +11,35 @@
     <div class="container">
         <div class="video-container">
             <video id="video" autoplay playsinline muted></video>
-            <div id="silhouette-guide" class="silhouette-guide"></div>
-            <div id="brightness-alert" class="brightness-alert hidden"></div>
+            <!-- 人像辅助线 -->
+            <div id="silhouette-guide" class="silhouette-guide" data-mode="upper">
+                <div class="sg sg-head"></div>
+                <div class="sg sg-torso"></div>
+                <div class="sg sg-arm sg-arm-left"></div>
+                <div class="sg sg-arm sg-arm-right"></div>
+                <div class="sg sg-leg sg-leg-left"></div>
+                <div class="sg sg-leg sg-leg-right"></div>
+            </div>
+            <!-- 亮度提示 -->
+            <div id="brightness-alert" class="alert hidden"></div>
+            <!-- 手机高度提示 -->
+            <div id="height-alert" class="alert hidden"></div>
+            <!-- 提词器 -->
+            <div id="teleprompter" class="teleprompter hidden">
+                <div class="teleprompter-inner" id="teleprompter-inner">
+                    <span id="teleprompter-text"></span>
+                </div>
+                <button id="teleprompter-close" class="teleprompter-close">×</button>
+            </div>
         </div>
+
+        <!-- 音频波形区域 -->
         <div class="audio-section">
             <div class="audio-status" id="audio-status">收声效果：检测中...</div>
             <canvas id="audio-waveform"></canvas>
         </div>
+
+        <!-- 控制区域 -->
         <div class="controls">
             <div class="mode-selector">
                 <button class="mode-btn active" data-mode="upper">上身</button>
@@ -28,13 +51,45 @@
                     <span class="icon">&#x1f504;</span>
                     <span>切换</span>
                 </button>
+                <button id="mirror-x-btn" class="action-btn">
+                    <span class="icon">&#x2194;</span>
+                    <span>水平镜像</span>
+                </button>
+                <button id="mirror-y-btn" class="action-btn">
+                    <span class="icon">&#x2195;</span>
+                    <span>垂直镜像</span>
+                </button>
                 <button id="record-btn" class="action-btn record-btn">
                     <span class="icon">&#x25cf;</span>
                     <span>录制</span>
                 </button>
+                <button id="teleprompter-btn" class="action-btn">
+                    <span class="icon">&#x1f4dc;</span>
+                    <span>提词器</span>
+                </button>
             </div>
         </div>
     </div>
+
+    <!-- 提词器设置弹窗 -->
+    <div id="teleprompter-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>提词器设置</h3>
+                <button id="close-teleprompter-modal" class="close-btn">&times;</button>
+            </div>
+            <div class="modal-body">
+                <textarea id="teleprompter-input" placeholder="输入提词内容，可换行。&#10;拍摄时文字会滚动显示在画面上方…"></textarea>
+                <div class="speed-control">
+                    <span>滚动速度</span>
+                    <input type="range" id="teleprompter-speed" min="1" max="10" value="5">
+                    <span id="teleprompter-speed-val">5</span>
+                </div>
+                <button id="teleprompter-apply" class="primary-btn">开始提词</button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
