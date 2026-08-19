@@ -6,20 +6,37 @@ let isRecording = false;
 let audioContext = null;
 let analyser = null;
 let animationId = null;
+let mirrorX = false;
+let mirrorY = false;
 
 const video = document.getElementById('video');
 const silhouetteGuide = document.getElementById('silhouette-guide');
 const brightnessAlert = document.getElementById('brightness-alert');
+const heightAlert = document.getElementById('height-alert');
 const audioWaveform = document.getElementById('audio-waveform');
 const audioStatus = document.getElementById('audio-status');
 const recordBtn = document.getElementById('record-btn');
 const switchCameraBtn = document.getElementById('switch-camera');
+const mirrorXBtn = document.getElementById('mirror-x-btn');
+const mirrorYBtn = document.getElementById('mirror-y-btn');
+const teleprompterBtn = document.getElementById('teleprompter-btn');
+const teleprompterModal = document.getElementById('teleprompter-modal');
+const teleprompterInput = document.getElementById('teleprompter-input');
+const teleprompterSpeed = document.getElementById('teleprompter-speed');
+const teleprompterSpeedVal = document.getElementById('teleprompter-speed-val');
+const teleprompterApply = document.getElementById('teleprompter-apply');
+const teleprompterCloseBtn = document.getElementById('teleprompter-close');
+const closeTeleprompterModalBtn = document.getElementById('close-teleprompter-modal');
+const teleprompter = document.getElementById('teleprompter');
+const teleprompterInner = document.getElementById('teleprompter-inner');
+const teleprompterText = document.getElementById('teleprompter-text');
 
 document.addEventListener('DOMContentLoaded', () => {
     initCamera();
     initModeSelector();
     initEventListeners();
     updateSilhouetteGuide('upper');
+    requestOrientationPermission();
 });
 
 async function initCamera() {
@@ -37,6 +54,7 @@ async function initCamera() {
         video.onloadedmetadata = () => {
             initAudio();
             startBrightnessCheck();
+            startOrientationCheck();
         };
     } catch (error) {
         console.error('摄像头初始化失败:', error);
@@ -143,24 +161,117 @@ function startBrightnessCheck() {
         }
         const averageBrightness = totalBrightness / (data.length / 4);
         if (averageBrightness < 50) {
-            showBrightnessAlert('画面过暗，请增加光线', 'too-dark');
+            showAlert(brightnessAlert, '画面过暗，请增加光线', 'too-dark');
         } else if (averageBrightness > 200) {
-            showBrightnessAlert('画面过亮，请减少光线', 'too-bright');
+            showAlert(brightnessAlert, '画面过亮，请减少光线', 'too-bright');
         } else {
-            hideBrightnessAlert();
+            hideAlert(brightnessAlert);
         }
         requestAnimationFrame(checkBrightness);
     }
     checkBrightness();
 }
 
-function showBrightnessAlert(message, type) {
-    brightnessAlert.textContent = message;
-    brightnessAlert.className = 'brightness-alert ' + type;
+function showAlert(el, message, type) {
+    el.textContent = message;
+    el.className = 'alert ' + type;
 }
 
-function hideBrightnessAlert() {
-    brightnessAlert.className = 'brightness-alert hidden';
+function hideAlert(el) {
+    el.className = 'alert hidden';
+}
+
+/* ===== 手机高度提醒（DeviceOrientation） ===== */
+function requestOrientationPermission() {
+    if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        const req = async () => {
+            try {
+                await DeviceOrientationEvent.requestPermission();
+            } catch (e) {
+                console.error('传感器权限被拒绝:', e);
+            }
+            window.removeEventListener('touchstart', req);
+            window.removeEventListener('click', req);
+        };
+        window.addEventListener('touchstart', req);
+        window.addEventListener('click', req);
+    }
+}
+
+function startOrientationCheck() {
+    window.addEventListener('deviceorientation', handleOrientation);
+}
+
+function handleOrientation(e) {
+    const beta = e.beta;
+    if (beta === null || beta === undefined) return;
+    const HOLD_MS = 1500;
+    if (beta > 35) {
+        heightAlert.dataset.state = 'high';
+        heightAlert.dataset.since = heightAlert.dataset.since || Date.now();
+        if (Date.now() - parseInt(heightAlert.dataset.since) > HOLD_MS) {
+            showAlert(heightAlert, '手机拿得太高，俯拍会显头大、身形变形，请放低一些', 'height-high');
+        }
+    } else if (beta < -35) {
+        heightAlert.dataset.state = 'low';
+        heightAlert.dataset.since = heightAlert.dataset.since || Date.now();
+        if (Date.now() - parseInt(heightAlert.dataset.since) > HOLD_MS) {
+            showAlert(heightAlert, '手机拿得太低，仰拍会显双下巴、脸型变形，请举高一些', 'height-low');
+        }
+    } else {
+        heightAlert.dataset.state = 'ok';
+        heightAlert.dataset.since = '';
+        hideAlert(heightAlert);
+    }
+}
+
+/* ===== 镜像功能 ===== */
+function applyMirror() {
+    let t = '';
+    if (mirrorX) t += 'scaleX(-1) ';
+    if (mirrorY) t += 'scaleY(-1) ';
+    video.style.transform = t || 'none';
+}
+
+function toggleMirrorX() {
+    mirrorX = !mirrorX;
+    mirrorXBtn.classList.toggle('active', mirrorX);
+    applyMirror();
+}
+
+function toggleMirrorY() {
+    mirrorY = !mirrorY;
+    mirrorYBtn.classList.toggle('active', mirrorY);
+    applyMirror();
+}
+
+/* ===== 提词器 ===== */
+let teleprompterActive = false;
+
+function openTeleprompterModal() {
+    teleprompterModal.classList.remove('hidden');
+}
+
+function closeTeleprompterModal() {
+    teleprompterModal.classList.add('hidden');
+}
+
+function applyTeleprompter() {
+    const text = teleprompterInput.value.trim();
+    if (!text) return;
+    teleprompterText.textContent = text.replace(/\n/g, '　');
+    const speed = parseInt(teleprompterSpeed.value);
+    teleprompterInner.style.animationDuration = Math.round(60 / speed) + 's';
+    teleprompter.classList.remove('hidden');
+    teleprompterActive = true;
+    teleprompterBtn.classList.add('active');
+    closeTeleprompterModal();
+}
+
+function stopTeleprompter() {
+    teleprompter.classList.add('hidden');
+    teleprompterActive = false;
+    teleprompterBtn.classList.remove('active');
 }
 
 function updateSilhouetteGuide(mode) {
@@ -181,6 +292,21 @@ function initModeSelector() {
 function initEventListeners() {
     switchCameraBtn.addEventListener('click', switchCamera);
     recordBtn.addEventListener('click', toggleRecording);
+    mirrorXBtn.addEventListener('click', toggleMirrorX);
+    mirrorYBtn.addEventListener('click', toggleMirrorY);
+    teleprompterBtn.addEventListener('click', () => {
+        if (teleprompterActive) {
+            stopTeleprompter();
+        } else {
+            openTeleprompterModal();
+        }
+    });
+    teleprompterApply.addEventListener('click', applyTeleprompter);
+    teleprompterCloseBtn.addEventListener('click', stopTeleprompter);
+    closeTeleprompterModalBtn.addEventListener('click', closeTeleprompterModal);
+    teleprompterSpeed.addEventListener('input', () => {
+        teleprompterSpeedVal.textContent = teleprompterSpeed.value;
+    });
 }
 
 async function switchCamera() {
@@ -205,9 +331,13 @@ function startRecording() {
     try {
         mediaRecorder = new MediaRecorder(currentStream, options);
     } catch (error) {
-        console.error('MediaRecorder 创建失败:', error);
-        alert('您的浏览器不支持视频录制功能');
-        return;
+        try {
+            mediaRecorder = new MediaRecorder(currentStream, { mimeType: 'video/webm' });
+        } catch (e2) {
+            console.error('MediaRecorder 创建失败:', error);
+            alert('您的浏览器不支持视频录制功能');
+            return;
+        }
     }
     mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -223,7 +353,7 @@ function startRecording() {
         document.body.appendChild(a);
         a.click();
         document.body.removeChild(a);
-        alert('录制完成！视频已下载');
+        alert('录制完成！视频已保存到相册');
     };
     mediaRecorder.start();
     isRecording = true;
