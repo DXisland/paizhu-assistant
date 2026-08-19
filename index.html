@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>拍摄辅助工具</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div class="container">
+        <div class="video-container">
+            <video id="video" autoplay playsinline muted></video>
+            <div id="silhouette-guide" class="silhouette-guide"></div>
+            <div id="brightness-alert" class="brightness-alert hidden"></div>
+        </div>
+        <div class="audio-section">
+            <div class="audio-status" id="audio-status">收声效果：检测中...</div>
+            <canvas id="audio-waveform"></canvas>
+        </div>
+        <div class="controls">
+            <div class="mode-selector">
+                <button class="mode-btn active" data-mode="upper">上身</button>
+                <button class="mode-btn" data-mode="half">半身</button>
+                <button class="mode-btn" data-mode="full">全身</button>
+            </div>
+            <div class="action-buttons">
+                <button id="switch-camera" class="action-btn">
+                    <span class="icon">&#x1f504;</span>
+                    <span>切换</span>
+                </button>
+                <button id="record-btn" class="action-btn record-btn">
+                    <span class="icon">&#x25cf;</span>
+                    <span>录制</span>
+                </button>
+            </div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
