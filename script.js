@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', () => {
     initModeSelector();
     initEventListeners();
     updateSilhouetteGuide('upper');
-    requestOrientationPermission();
+    setTimeout(requestOrientationPermission, 500);
 });
 
 async function initCamera() {
@@ -186,19 +186,31 @@ let betaBase = null;
 let betaSamples = [];
 let orientationReceived = false;
 
+const sensorTip = document.getElementById('sensor-tip');
+const toast = document.getElementById('toast');
+const toastText = document.getElementById('toast-text');
+const toastDownload = document.getElementById('toast-download');
+
 function requestOrientationPermission() {
     if (typeof DeviceOrientationEvent !== 'undefined' && typeof DeviceOrientationEvent.requestPermission === 'function') {
+        // iOS: 需要用户手势，显示引导条，点击后请求
+        sensorTip.classList.remove('hidden');
         const req = async () => {
             try {
                 await DeviceOrientationEvent.requestPermission();
+                sensorTip.classList.add('hidden');
+                window.removeEventListener('touchstart', req);
+                window.removeEventListener('click', req);
             } catch (e) {
                 console.error('传感器权限被拒绝:', e);
+                sensorTip.classList.add('hidden');
             }
-            window.removeEventListener('touchstart', req);
-            window.removeEventListener('click', req);
         };
         window.addEventListener('touchstart', req);
         window.addEventListener('click', req);
+    } else {
+        // Android: 无需权限，直接可用
+        sensorTip.classList.add('hidden');
     }
 }
 
@@ -245,6 +257,20 @@ function handleOrientation(e) {
         heightAlert.dataset.since = '';
         hideAlert(heightAlert);
     }
+}
+
+/* ===== Toast 提示 ===== */
+function showToast(message, showDownload) {
+    toastText.textContent = message;
+    if (showDownload && typeof toastDownload.href === 'string' && toastDownload.href !== '#') {
+        toastDownload.style.display = 'inline';
+    } else {
+        toastDownload.style.display = 'none';
+    }
+    toast.classList.remove('hidden');
+    setTimeout(() => {
+        toast.classList.add('hidden');
+    }, 6000);
 }
 
 /* ===== 镜像功能 ===== */
@@ -348,18 +374,21 @@ function toggleRecording() {
 }
 
 function startRecording() {
+    if (!currentStream) return;
     recordedChunks = [];
-    const options = { mimeType: 'video/webm;codecs=vp9' };
+    let options = { mimeType: 'video/webm;codecs=vp9' };
+    if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+        options = { mimeType: 'video/webm' };
+        if (!MediaRecorder.isTypeSupported(options.mimeType)) {
+            options = {};
+        }
+    }
     try {
         mediaRecorder = new MediaRecorder(currentStream, options);
     } catch (error) {
-        try {
-            mediaRecorder = new MediaRecorder(currentStream, { mimeType: 'video/webm' });
-        } catch (e2) {
-            console.error('MediaRecorder 创建失败:', error);
-            alert('您的浏览器不支持视频录制功能');
-            return;
-        }
+        console.error('MediaRecorder 创建失败:', error);
+        showToast('您的浏览器不支持视频录制功能', false);
+        return;
     }
     mediaRecorder.ondataavailable = (event) => {
         if (event.data.size > 0) {
@@ -369,15 +398,19 @@ function startRecording() {
     mediaRecorder.onstop = () => {
         const blob = new Blob(recordedChunks, { type: 'video/webm' });
         const url = URL.createObjectURL(blob);
-        const a = document.createElement('a');
-        a.href = url;
-        a.download = 'recording_' + Date.now() + '.webm';
-        document.body.appendChild(a);
-        a.click();
-        document.body.removeChild(a);
-        alert('录制完成！视频已保存到相册');
+        toastDownload.href = url;
+        toastDownload.download = 'recording_' + Date.now() + '.webm';
+        showToast('录制完成，点击保存视频', true);
+        // 恢复预览：重新绑定视频流，避免 iOS 录制后画面卡住
+        try {
+            video.srcObject = null;
+            video.srcObject = currentStream;
+            video.play().catch(() => {});
+        } catch (e) {
+            console.error('恢复预览失败:', e);
+        }
     };
-    mediaRecorder.start();
+    mediaRecorder.start(1000);
     isRecording = true;
     recordBtn.classList.add('recording');
     recordBtn.querySelector('.icon').textContent = '\u23F9';
