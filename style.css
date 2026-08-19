@@ -213,6 +213,67 @@ body {
     border: 1.5px solid #03a9f4;
 }
 
+/* ===== 传感器授权引导 ===== */
+.sensor-tip {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    border: 1.5px solid #ffeb3b;
+    border-radius: 24px;
+    padding: 10px 20px;
+    font-size: 14px;
+    font-weight: 600;
+    z-index: 12;
+    animation: tipBounce 1.2s ease-in-out infinite;
+    white-space: nowrap;
+}
+
+.sensor-tip.hidden {
+    display: none;
+}
+
+@keyframes tipBounce {
+    0%, 100% { transform: translateX(-50%) translateY(0); }
+    50% { transform: translateX(-50%) translateY(-6px); }
+}
+
+/* ===== Toast 提示 ===== */
+.toast {
+    position: fixed;
+    left: 50%;
+    bottom: 180px;
+    transform: translateX(-50%);
+    background: rgba(0, 0, 0, 0.88);
+    border: 1px solid #4CAF50;
+    border-radius: 12px;
+    padding: 12px 18px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    z-index: 200;
+    max-width: 90%;
+}
+
+.toast.hidden {
+    display: none;
+}
+
+.toast span {
+    color: #fff;
+    font-size: 14px;
+}
+
+.toast a {
+    color: #4CAF50;
+    font-size: 14px;
+    font-weight: 600;
+    text-decoration: none;
+    white-space: nowrap;
+}
+
 /* ===== 提词器 ===== */
 .teleprompter {
     position: absolute;
